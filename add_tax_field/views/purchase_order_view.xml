@@ -16,8 +16,10 @@
               <field name="amount_total" class="h3"></field>
 
 <!--                  <field name="total_tax" class="h3"></field>-->
-              <field name="excise_tax"></field>
+<!--              <field name="excise_tax"></field>-->
               <field name="total_tax"></field>
+              <field name="untaxed_amount"></field>
+              <field name="tax_totals" widget="account-tax-totals-field" nolabel="1" colspan="2"/>
 
 
           </xpath>

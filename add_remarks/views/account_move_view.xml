@@ -1,0 +1,24 @@
+<odoo>
+    <data>
+        <record id="view_move_form_inherit" model="ir.ui.view" >
+            <field name="name">account.view.move.form.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <notebook position="inside">
+                    <page string="Remarks" name="remarks">
+                        <group >
+                            <field name="is_manager" invisible="1"></field>
+                            <field name="is_customer"  invisible="1"></field>
+                            <field name="manager_remark" attrs="{'readonly':['|', ('is_manager','=', False),('state','!=', 'draft')]}"></field>
+                            <field name="customer_remark" attrs="{'readonly':['|', ('is_customer','=', False),('state','!=', 'draft')]}" ></field>
+                        </group>
+                    </page>
+
+                </notebook>
+
+            </field>
+        </record>
+        
+    </data>
+</odoo>

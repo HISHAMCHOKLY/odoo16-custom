@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+om_odoo_inheritance.access_res_partner_lines,access_res_partner_lines,om_odoo_inheritance.model_res_partner_lines,base.group_user,1,1,1,1

@@ -8,18 +8,14 @@
       <field name="inherit_id" ref="purchase.purchase_order_form"/>
       <field name="arch" type="xml">
         <xpath expr="//field[@name='order_line']/tree/field[@name='taxes_id']"  position="after">
-
           <field name="excise_tax" size="128"/>
         </xpath>
           <xpath expr="//field[@name='tax_totals']"  position="replace">
-
+              <field name="untaxed_amount"></field>
+              <field name="excise_tax"></field>
+              <field name="total_tax" ></field>
               <field name="amount_total" class="h3"></field>
 
-<!--                  <field name="total_tax" class="h3"></field>-->
-<!--              <field name="excise_tax"></field>-->
-              <field name="total_tax"></field>
-              <field name="untaxed_amount"></field>
-              <field name="tax_totals" widget="account-tax-totals-field" nolabel="1" colspan="2"/>
 
 
           </xpath>

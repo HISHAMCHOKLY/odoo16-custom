@@ -1,19 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <data>
+    <data>
 
-      <record id="view_account_move_form_inherited" model="ir.ui.view">
-      <field name="name">account.move.form</field>
-      <field name="model">account.move</field>
-      <field name="inherit_id" ref="account.view_move_form"/>
-      <field name="arch" type="xml">
-        <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='price_unit']"  position="after">
-          <field name="excise_tax"/>
-        </xpath>
-      </field>
-    </record>
+        <record id="view_account_move_form_inherited" model="ir.ui.view">
+            <field name="name">account.move.form</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='price_unit']" position="after">
+                    <field name="excise_tax"/>
+                </xpath>
+<!--                <xpath expr="//field[@name='tax_totals']" position="replace">-->
+<!--                    <field name="tax_totals"/>-->
+<!--                </xpath>-->
+
+            </field>
+        </record>
 
 
-
-  </data>
+    </data>
 </odoo>
+
+
+
+<!--     <field name="tax_totals" context="{'untaxed_amount_in_context':untaxed_amount,'excise_tax_in_context':excise_tax,'total_tax_in_context':total_tax,'amount_total_in_context':amount_total}"/>-->
+<!--                    <field name="untaxed_amount"></field>-->
+<!--                    <field name="excise_tax"></field>-->
+<!--                    <field name="total_tax"></field>-->
+<!--                    <field name="amount_total" class="h3"></field>-->

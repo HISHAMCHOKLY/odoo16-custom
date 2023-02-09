@@ -10,9 +10,13 @@
                 <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='price_unit']" position="after">
                     <field name="excise_tax"/>
                 </xpath>
-<!--                <xpath expr="//field[@name='tax_totals']" position="replace">-->
-<!--                    <field name="tax_totals"/>-->
-<!--                </xpath>-->
+                <xpath expr="//field[@name='tax_totals']" position="replace">
+                    <field name="tax_totals" invisible="1"/>
+                    <field name="excise_tax"></field>
+                    <field name="amount_untaxed"></field>
+                    <field name="amount_tax"></field>
+                    <field name="amount_total" class="h3"></field>
+                </xpath>
 
             </field>
         </record>

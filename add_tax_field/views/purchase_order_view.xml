@@ -11,13 +11,10 @@
           <field name="excise_tax" size="128"/>
         </xpath>
           <xpath expr="//field[@name='tax_totals']"  position="replace">
-              <field name="untaxed_amount"></field>
               <field name="excise_tax"></field>
-              <field name="total_tax" ></field>
+              <field name="amount_untaxed"></field>
+              <field name="amount_tax"></field>
               <field name="amount_total" class="h3"></field>
-
-
-
           </xpath>
 
 

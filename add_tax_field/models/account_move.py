@@ -5,25 +5,38 @@ from odoo import api, fields, models, exceptions
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-    excise_tax = fields.Float( store=True ,readonly=True)
-    untaxed_amount = fields.Float( store=True,readonly=True)
-    total_tax = fields.Float(string="Taxes", store=True,readonly=True)
-    tax_totals=fields.Char()
+    excise_tax = fields.Monetary( store=True ,readonly=True, compute='_compute_amount')
+
 
 
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
-    excise_tax=fields.Float(string="Excise Tax")
+    excise_tax=fields.Monetary(string="Excise Tax",compute='_compute_totals', store=True,currency_field='currency_id',)
 
+    @api.depends('quantity', 'discount', 'price_unit', 'tax_ids', 'currency_id', 'excise_tax')
+    def _compute_totals(self):
+        for line in self:
+            if line.display_type != 'product':
+                line.price_total = line.price_subtotal = False
+            # Compute 'price_subtotal'.
+            line_discount_price_unit = line.price_unit * (1 - (line.discount / 100.0))
+            subtotal = line.quantity * line_discount_price_unit
 
-
-
-
-
-
-
-
+            # Compute 'price_total'.
+            if line.tax_ids:
+                taxes_res = line.tax_ids.compute_all(
+                    line_discount_price_unit,
+                    quantity=line.quantity,
+                    currency=line.currency_id,
+                    product=line.product_id,
+                    partner=line.partner_id,
+                    is_refund=line.is_refund,
+                )
+                line.price_subtotal = taxes_res['total_excluded']+line.excise_tax
+                line.price_total = taxes_res['total_included']+line.excise_tax
+            else:
+                line.price_total = line.price_subtotal = subtotal+line.excise_tax
 
 
 

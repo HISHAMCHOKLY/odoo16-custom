@@ -5,32 +5,30 @@ from odoo.tools.misc import formatLang
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
-    excise_tax_tot = fields.Float(string="Excise Tax")
-
+    excise_tax = fields.Monetary(compute='_amount_all,_compute_tax_totals', store=True)
 
     @api.depends('order_line.price_total')
-    def _compute_grand_total(self):
+    def _amount_all(self):
         for order in self:
             order_lines = order.order_line.filtered(lambda x: not x.display_type)
-            order.excise_tax = sum(order_lines.mapped('excise_tax'))
-            order.total_tax = sum(order_lines.mapped('price_tax'))
-            order.untaxed_amount = sum(order_lines.mapped('price_subtotal')) - sum(order_lines.mapped('excise_tax'))
-
-    excise_tax = fields.Float(compute='_compute_grand_total', store=True)
-    untaxed_amount = fields.Float(compute='_compute_grand_total', store=True)
-    total_tax = fields.Float(string="Taxes", compute='_compute_grand_total', store=True)
+            excise_tax = sum(order_lines.mapped('excise_tax'))
+            amount_untaxed = sum(order_lines.mapped('price_subtotal'))
+            # amount_total = sum(order_lines.mapped('price_total'))
+            amount_tax = sum(order_lines.mapped('price_tax'))
+            order.update({
+                'excise_tax': order.currency_id.round(excise_tax),
+                'amount_untaxed':order.currency_id.round(amount_untaxed),
+                'amount_tax':order.currency_id.round(amount_tax),
+                'amount_total':amount_untaxed+amount_tax,
+            })
 
     def _prepare_invoice(self):
         invoice_vals = super()._prepare_invoice()
         invoice_vals['excise_tax'] = self.excise_tax
-        invoice_vals['untaxed_amount'] = self.untaxed_amount
-        invoice_vals['total_tax'] = self.total_tax
+        invoice_vals['amount_untaxed'] = self.amount_untaxed
+        invoice_vals['amount_tax'] = self.amount_tax
         invoice_vals['amount_total'] = self.amount_total+self.excise_tax
         return invoice_vals
-
-
-
-
 
 class PurchaseOrderLine(models.Model):
     _inherit = 'purchase.order.line'

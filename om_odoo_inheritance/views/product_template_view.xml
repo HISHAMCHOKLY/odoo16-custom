@@ -13,9 +13,6 @@
 
 
           </xpath>
-          <xpath expr="//field[@name='detailed_type']" position="after">
-              <field name="default_delivery_service"/>
-          </xpath>
         </field>
     </record>
 

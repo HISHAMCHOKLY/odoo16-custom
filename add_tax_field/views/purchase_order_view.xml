@@ -10,7 +10,11 @@
         <xpath expr="//field[@name='order_line']/tree/field[@name='taxes_id']"  position="after">
           <field name="excise_tax" size="128"/>
         </xpath>
-          <xpath expr="//field[@name='tax_totals']"  position="replace">
+<!--          <xpath expr="//field[@name='tax_totals']" position="before">-->
+<!--              <field name="excise_tax"></field>-->
+
+<!--          </xpath>-->
+          <xpath expr="//field[@name='tax_totals']"  position="after">
               <field name="excise_tax"></field>
               <field name="amount_untaxed"></field>
               <field name="amount_tax"></field>

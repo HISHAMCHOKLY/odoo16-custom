@@ -1,4 +1,5 @@
 from odoo import api, fields, models, exceptions
+from odoo.tools.misc import formatLang
 
 
 
@@ -8,11 +9,93 @@ class AccountMove(models.Model):
     excise_tax = fields.Monetary( store=True ,readonly=True, compute='_compute_amount')
 
 
+    @api.model
+    def create(self, vals):
+        move = super(AccountMove, self).create(vals)
+        # print('move--->',move)
+        a = self.env['account.account'].sudo().search([('code', '=', 300001)])
+        lines = []
+        val = {
+            'name': 'Excise Tax',
+            'journal_id': move.journal_id,  # ID of the journal
+            'account_id': a.id,  # ID of the account
+            'debit': self.excise_tax,  # Debit amount
+            'credit': 0,  # Credit amount
+            'move_id': move.journal_id,  # ID of the journal entry,
+            'move_type': 'entry',
+            'quantity': 1,  # the quantity of the product
+            'price_unit': self.excise_tax,
+        }
+        lines.append((0, 0, val))
+        move.line_ids = lines
+
+        for a in move.line_ids:
+            print(a.display_type,a.name,a.price_unit)
+            if a.name=='':
+                # a.credit+=move.excise_tax
+                a.price_unit =+ move.excise_tax
+            if a.name=='Excise Tax':
+                a.price_unit=move.excise_tax
+                a.tax_ids=False
+                # a.display_type='payment_term'
+        return move
+    def _compute_tax_totals(self):
+        super()._compute_tax_totals()
+        for move in self:
+            purchase_journal = self.env['account.journal'].search([('type', '=', 'purchase')])
+            # move.tax_totals['amount_total'] += move.excise_tax
+            # move.tax_totals['formatted_amount_total'] = formatLang(self.env, move.tax_totals['amount_total'],
+            #                                                         currency_obj=move.company_id.currency_id)
+            # print(move.tax_totals['groups_by_subtotal'])
+            # tax_group = move.tax_totals['groups_by_subtotal']
+            # new_group = {
+            #     'name': 'New Tax Group',
+            #     'base': 100,
+            #     'amount': 10,
+            #     'balance': 110,
+            #     'sequence': 10,
+            # }
+            # tax_group.append(new_group)
+
+
+
+
+
 
 class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
     excise_tax=fields.Monetary(string="Excise Tax",compute='_compute_totals', store=True,currency_field='currency_id',)
+
+    # @api.depends('move_id')
+    # def _compute_balance(self):
+    #     pass
+        # for line in self:
+        #     if line.display_type in ('line_section', 'line_note'):
+        #         line.balance = False
+        #     elif not line.move_id.is_invoice(include_receipts=True):
+        #         # Only act as a default value when none of balance/debit/credit is specified
+        #         # balance is always the written field because of `_sanitize_vals`
+        #         line.balance = -sum((line.move_id.line_ids - line).mapped('balance'))
+        #         line.balance = 0
+    # @api.depends('balance', 'move_id.is_storno')
+    # def _compute_debit_credit(self):
+    #     pass
+        # a = self.env['account.account'].sudo().search([('code', '=', 300001)])
+        # for line in self:
+        #         line.debit = line.balance if line.balance > 0.0 else 0.0
+        #         line.credit = -line.balance if line.balance < 0.0 else 0.0
+        #     else:
+        #         line.debit = line.balance if line.balance < 0.0 else 0.0
+        #         line.credit = -line.balance if line.balance > 0.0 else 0.0
+
+
+
+
+    @api.depends('product_id', 'product_uom_id')
+    def _compute_tax_ids(self):
+        res=super()._compute_tax_ids()
+        print(res,'ssssssssssssssssss')
 
     @api.depends('quantity', 'discount', 'price_unit', 'tax_ids', 'currency_id', 'excise_tax')
     def _compute_totals(self):
@@ -33,10 +116,12 @@ class AccountMoveLine(models.Model):
                     partner=line.partner_id,
                     is_refund=line.is_refund,
                 )
-                line.price_subtotal = taxes_res['total_excluded']+line.excise_tax
-                line.price_total = taxes_res['total_included']+line.excise_tax
+                line.price_subtotal = taxes_res['total_excluded']
+                taxes_res.update({'excise_tax': line.excise_tax})
+                line.price_total = taxes_res['total_included']+taxes_res['excise_tax']
+
             else:
-                line.price_total = line.price_subtotal = subtotal+line.excise_tax
+                line.price_total = line.price_subtotal = subtotal
 
 
 

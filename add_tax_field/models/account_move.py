@@ -8,7 +8,6 @@ class AccountMove(models.Model):
 
     excise_tax = fields.Monetary( store=True ,readonly=True, compute='_compute_amount')
 
-
     @api.model
     def create(self, vals):
         move = super(AccountMove, self).create(vals)

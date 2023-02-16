@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+   <t t-name="CategoryScreen" owl="1">
+       <div class="clientlist-screen screen">
+           <div class="screen-content">
+               <div class="top-content">
+                   <div class="button back" t-on-click="back">
+                       Back
+                   </div>
+               </div>
+               <section class="full-content" >
+                   <div class="client-window">
+                       <section>
+                           <div>
+                               <div class="scrollable-y">
+                                   <table class="categories-list">
+                                       <thead>
+                                           <tr>
+                                               <th> Name </th>
+                                               <th> Costing Method </th>
+                                               <th > Inventory Valuation </th>
+                                           </tr>
+                                       </thead>
+                                       <tbody>
+                                           <t t-foreach="props.categories" t-as="categ" t-key="categ.id">
+                                               <tr>
+                                                   <td><t t-esc="categ.name"/></td>
+                                                   <td><t t-esc="categ.property_cost_method"/></td>
+                                                   <td><t t-esc="categ.property_valuation"/></td>
+                                               </tr>
+                                           </t>
+                                       </tbody>
+                                   </table>
+                               </div>
+                           </div>
+                       </section>
+                   </div>
+               </section>
+           </div>
+       </div>
+   </t>
+</templates>

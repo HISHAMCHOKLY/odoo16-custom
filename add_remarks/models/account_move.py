@@ -23,11 +23,11 @@ class AccountMove(models.Model):
         return defaults
 
 
-    @api.model
-    def action_post(self):
-        if not self.customer_remark or not self.manager_remark:
-            raise exceptions.UserError("The Remarks field must be filled before confirming the account move.")
-        res = super().action_post()
-        return res
+    # @api.model
+    # def action_post(self):
+    #     if not self.customer_remark or not self.manager_remark:
+    #         raise exceptions.UserError("The Remarks field must be filled before confirming the account move.")
+    #     res = super().action_post()
+    #     return res
 
 
